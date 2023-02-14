@@ -3,14 +3,18 @@ import re
 def tokenize(code):
 
     token_specification = [
+        ('DECIMAL', r'\d+(\.\d+)?'),
         ('NUMBER',   r'\d+(\.\d*)?'),       
         ('ASSIGN',   r'='),                     
-        ('IDENTIFIER', r'[a-zA-Z_][a-zA-Z_0-9]*'), 
+        ('HEADER', r'<stdio.h>'),
+        ('COMMENT', r'//.*'), 
         ('OPERATOR', r'[+\-*/]'),               
-        ('KEYWORD', r'(int|float|double)'),
+        ('KEYWORD', r'(int|float|double|void)'),
         ('SEPARATOR',r'[,;()\[\]\{\}\>\<\\\/\"\.]'),           
         ('NEWLINE', r'\n'),                   
         ('SKIP', r'[ \t]+'),               
+        ('PREPROCESSING_DIRECTIVE', r'#include'),
+        ('IDENTIFIER', r'[a-zA-Z_][a-zA-Z_0-9]*'),
         ('MISMATCH', r'.'),                     
     ]
     
@@ -25,6 +29,8 @@ def tokenize(code):
             yield (type, value, line_num)
         elif type == 'IDENTIFIER':
             yield (type, value, line_num)
+        elif type == "DECIMAL":
+            yield (type, value, line_num)
         elif type == 'OPERATOR':
             yield (type, value, line_num)
         elif type == 'ASSIGN':
@@ -32,6 +38,12 @@ def tokenize(code):
         elif type == 'KEYWORD':
             yield (type, value, line_num)
         elif type == 'SEPARATOR':
+            yield (type, value, line_num)
+        elif type == 'PREPROCESSING_DIRECTIVE':
+            yield (type, value, line_num)
+        elif type == 'HEADER':
+            yield (type, value, line_num)
+        elif type == "COMMENT":
             yield (type, value, line_num)
         elif type == 'NEWLINE':
             line_start = match.end()
